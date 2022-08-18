@@ -1,9 +1,14 @@
 package com.example.springcqrs.command.command;
 
+import java.util.Objects;
+
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
 /**
  * @author 
+ * Commands describe an intent to change the application's state. 
+ * They are implemented as (preferably read-only) POJOs that are wrapped using one of the 
+ * CommandMessage implementations.
  **/
 public class BaseCommand<T> {
 
@@ -19,5 +24,27 @@ public class BaseCommand<T> {
     public T getId() {
         return id;
     }
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BaseCommand<?> other = (BaseCommand<?>) obj;
+		return Objects.equals(id, other.id);
+	}
+
+	@Override
+	public String toString() {
+		return "BaseCommand [id=" + id + "]";
+	}
 
 }

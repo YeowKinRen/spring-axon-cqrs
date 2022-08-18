@@ -30,7 +30,7 @@ Notes
 #### Component 
 - Command Bus: provides the mechanism of having commands routed to their respective Command Handlers. ```@CommandHandler``` annotation on Aggregate Class means that when the Command is created, your Aggregate Class's method would be called. The Command Bus is the component that makes this possible.
 
-- Command Gateway - exposes a more friendly API to the Command Bus.
+- Command Gateway - convenient interface towards the Command dispatching mechanism..
 
 - Event Bus - mechanism that dispatches events to the subscribe event handlers. ```AggregateLifecycle.apply(new Event(command.getId, command.getStatus));```
 
@@ -39,11 +39,13 @@ Notes
 
 ### Axon Annotations
 
-- ```@AggregateIdentifier```: 
+- ```@Aggregate```: Aggregate class level annotation
 
-- ``` @CommandHandler```: 
+- ```@AggregateIdentifier```: Aggregate field level annotation for identifying a particular instance of the Aggregate.
 
-- ```@EventSourcingHandler```: 
+- ```@CommandHandler```: Aggregate method level annotation to handle commands. The handler method use the ```AggregateLifecyle.apply()``` method to register events. These events, in turn, are handled by methods annotated with ```@EventSourcingHandler``` annotation
+
+- ```@EventSourcingHandler```: Aggregate method level annotation for event sourced aggregate to perform all state changes. Aggregate Identifier must be set in the first method annotated with  ```@EventSourcingHandler```. In other words, this will be the creation Event.
   
 - ```@TargetAggregateIdentifier```: 
 
@@ -55,6 +57,6 @@ Resource
 - [Official AxonIQ Reference Guide](https://docs.axoniq.io/reference-guide/axon-framework/introduction)
 - [CQRS and Event Sourcing with Spring Boot and Axon Framework](https://www.youtube.com/watch?v=SL2VSYecDvQ)
 - [A Guide to the Axon Framework](https://www.baeldung.com/axon-cqrs-event-sourcing)
-
+- Implementing Event Sourcing With Axon and Spring Boot [P1](https://dzone.com/articles/implementing-event-sourcing-using-axon-and-spring)[P2](https://dzone.com/articles/implementing-event-sourcing-with-axon-and-spring-b)[P3](https://dzone.com/articles/implementing-event-sourcing-with-axon-and-spring-b-1)
 
 

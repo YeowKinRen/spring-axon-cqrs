@@ -31,29 +31,22 @@ public class AccountAggregate {
 	private BigDecimal balance;
 	private String status;
 
+	/**no-args default constructor 
+	 * Axon creates an empty instance of the aggregate. Then, it applies the events. If this constructor is not present, it will result in an exception.
+	 */
 	public AccountAggregate() {
 	}
 
+	///////////////////////////////////////////////////////////////////
+	//
+	///////////////////////////////////////////////////////////////////
 	@CommandHandler
 	public AccountAggregate(CreateAccountCommand createAccountCommand) {
 		log.info("CreateAccountCommand received.");
 		AggregateLifecycle
 				.apply(new AccountCreatedEvent(createAccountCommand.getId(), createAccountCommand.getBalance()));
 	}
-
-	@CommandHandler
-	public void on(DepositMoneyCommand depositMoneyCommand) {
-		log.info("DepositMoneyCommand received.");
-		AggregateLifecycle
-				.apply(new AccountCreditedEvent(depositMoneyCommand.getId(), depositMoneyCommand.getAmount()));
-	}
-
-	@CommandHandler
-	public void on(WithdrawMoneyCommand withdrawMoneyCommand) {
-		log.info("WithdrawMoneyCommand received.");
-		AggregateLifecycle
-				.apply(new AccountDebitedEvent(withdrawMoneyCommand.getId(), withdrawMoneyCommand.getAmount()));
-	}
+	
 
 	@EventSourcingHandler
 	public void on(AccountCreatedEvent accountCreatedEvent) {
@@ -71,10 +64,30 @@ public class AccountAggregate {
 		this.setStatus(accountActivatedEvent.getStatus());
 	}
 
+	///////////////////////////////////////////////////////////////////
+	//
+	///////////////////////////////////////////////////////////////////
+	@CommandHandler
+	public void handle(DepositMoneyCommand depositMoneyCommand) {
+		log.info("DepositMoneyCommand received.");
+		AggregateLifecycle
+				.apply(new AccountCreditedEvent(depositMoneyCommand.getId(), depositMoneyCommand.getAmount()));
+	}
+	
 	@EventSourcingHandler
 	public void on(AccountCreditedEvent accountCreditedEvent) {
 		log.info("An AccountCreditedEvent occurred.");
 		this.balance = this.balance.add(accountCreditedEvent.getAmount());
+	}
+
+	///////////////////////////////////////////////////////////////////
+	//
+	///////////////////////////////////////////////////////////////////
+	@CommandHandler
+	public void handle(WithdrawMoneyCommand withdrawMoneyCommand) {
+		log.info("WithdrawMoneyCommand received.");
+		AggregateLifecycle
+				.apply(new AccountDebitedEvent(withdrawMoneyCommand.getId(), withdrawMoneyCommand.getAmount()));
 	}
 
 	@EventSourcingHandler
