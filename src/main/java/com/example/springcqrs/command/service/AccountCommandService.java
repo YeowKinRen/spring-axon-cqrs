@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.example.springcqrs.command.command.CreateAccountCommand;
 import com.example.springcqrs.command.command.DepositMoneyCommand;
 import com.example.springcqrs.command.command.WithdrawMoneyCommand;
-import com.example.springcqrs.command.controller.BankAccountController;
 import com.example.springcqrs.command.dto.CreateAccountRequest;
 import com.example.springcqrs.command.dto.DepositRequest;
 import com.example.springcqrs.command.dto.WithdrawalRequest;
@@ -33,6 +32,7 @@ public class AccountCommandService {
 //    }
 
     public CompletableFuture<String> createAccount(CreateAccountRequest createAccountRequest) {
+    	log.info("commandGateway send createAccount.");
         return commandGateway.send(new CreateAccountCommand(
                 UUID.randomUUID().toString(),
                 createAccountRequest.getStartingBalance())
@@ -40,6 +40,7 @@ public class AccountCommandService {
     }
 
     public CompletableFuture<String> depositToAccount(DepositRequest depositRequest) {
+    	log.info("commandGateway send depositToAccount.");
         return commandGateway.send(new DepositMoneyCommand(
                 depositRequest.getAccountId(),
                 depositRequest.getAmount()
@@ -47,6 +48,7 @@ public class AccountCommandService {
     }
 
     public CompletableFuture<String> withdrawFromAccount(WithdrawalRequest withdrawalRequest) {
+    	log.info("commandGateway send withdrawFromAccount.");
         return commandGateway.send(new WithdrawMoneyCommand(
                 withdrawalRequest.getAccountId(),
                 withdrawalRequest.getAmount()

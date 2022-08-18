@@ -22,7 +22,7 @@ import com.example.springcqrs.query.repository.AccountRepository;
 @Service
 public class ManageAccountService {
 	
-	private static final Logger log = LoggerFactory.getLogger(AccountAggregate.class);
+	private static final Logger log = LoggerFactory.getLogger(ManageAccountService.class);
 
 	@Autowired
     private AccountRepository accountRepository;

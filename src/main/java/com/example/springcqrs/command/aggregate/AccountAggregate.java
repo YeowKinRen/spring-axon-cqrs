@@ -19,72 +19,69 @@ import com.example.springcqrs.common.event.AccountCreditedEvent;
 import com.example.springcqrs.common.event.AccountDebitedEvent;
 
 /**
- * @author 
+ * @author
  **/
 @Aggregate
 public class AccountAggregate {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(AccountAggregate.class);
 
-    @AggregateIdentifier
-    private String accountId;
-    private BigDecimal balance;
-    private String status;
+	@AggregateIdentifier
+	private String accountId;
+	private BigDecimal balance;
+	private String status;
 
-    public AccountAggregate() {
-    }
+	public AccountAggregate() {
+	}
 
-    @CommandHandler
-    public AccountAggregate(CreateAccountCommand createAccountCommand) {
-        log.info("CreateAccountCommand received.");
-        AggregateLifecycle.apply(new AccountCreatedEvent(
-                createAccountCommand.getId(),
-                createAccountCommand.getBalance()));
-    }
+	@CommandHandler
+	public AccountAggregate(CreateAccountCommand createAccountCommand) {
+		log.info("CreateAccountCommand received.");
+		AggregateLifecycle
+				.apply(new AccountCreatedEvent(createAccountCommand.getId(), createAccountCommand.getBalance()));
+	}
 
-    @EventSourcingHandler
-    public void on(AccountCreatedEvent accountCreatedEvent) {
-        log.info("An AccountCreatedEvent occurred.");
-        this.accountId = accountCreatedEvent.getId();
-        this.balance = accountCreatedEvent.getBalance();
-        this.setStatus("CREATED");
+	@CommandHandler
+	public void on(DepositMoneyCommand depositMoneyCommand) {
+		log.info("DepositMoneyCommand received.");
+		AggregateLifecycle
+				.apply(new AccountCreditedEvent(depositMoneyCommand.getId(), depositMoneyCommand.getAmount()));
+	}
 
-        AggregateLifecycle.apply(new AccountActivatedEvent(this.accountId, "ACTIVATED"));
-    }
+	@CommandHandler
+	public void on(WithdrawMoneyCommand withdrawMoneyCommand) {
+		log.info("WithdrawMoneyCommand received.");
+		AggregateLifecycle
+				.apply(new AccountDebitedEvent(withdrawMoneyCommand.getId(), withdrawMoneyCommand.getAmount()));
+	}
 
-    @EventSourcingHandler
-    public void on(AccountActivatedEvent accountActivatedEvent) {
-        log.info("An AccountActivatedEvent occurred."+ accountActivatedEvent.getStatus());
-        this.setStatus(accountActivatedEvent.getStatus());
-    }
+	@EventSourcingHandler
+	public void on(AccountCreatedEvent accountCreatedEvent) {
+		log.info("An AccountCreatedEvent occurred.");
+		this.accountId = accountCreatedEvent.getId();
+		this.balance = accountCreatedEvent.getBalance();
+		this.setStatus("CREATED");
 
-    @CommandHandler
-    public void on(DepositMoneyCommand depositMoneyCommand) {
-        log.info("DepositMoneyCommand received.");
-        AggregateLifecycle.apply(new AccountCreditedEvent(
-                depositMoneyCommand.getId(),
-                depositMoneyCommand.getAmount()));
-    }
+		AggregateLifecycle.apply(new AccountActivatedEvent(this.accountId, "ACTIVATED"));
+	}
 
-    @EventSourcingHandler
-    public void on(AccountCreditedEvent accountCreditedEvent) {
-        log.info("An AccountCreditedEvent occurred.");
-        this.balance = this.balance.add(accountCreditedEvent.getAmount());
-    }
+	@EventSourcingHandler
+	public void on(AccountActivatedEvent accountActivatedEvent) {
+		log.info("An AccountActivatedEvent occurred." + accountActivatedEvent.getStatus());
+		this.setStatus(accountActivatedEvent.getStatus());
+	}
 
-    @CommandHandler
-    public void on(WithdrawMoneyCommand withdrawMoneyCommand) {
-        log.info("WithdrawMoneyCommand received.");
-        AggregateLifecycle.apply(new AccountDebitedEvent(
-                withdrawMoneyCommand.getId(),
-                withdrawMoneyCommand.getAmount()));
-    }
+	@EventSourcingHandler
+	public void on(AccountCreditedEvent accountCreditedEvent) {
+		log.info("An AccountCreditedEvent occurred.");
+		this.balance = this.balance.add(accountCreditedEvent.getAmount());
+	}
 
-    @EventSourcingHandler
-    public void on(AccountDebitedEvent accountDebitedEvent) {
-        log.info("An AccountDebitedEvent occurred.");
-        this.balance = this.balance.subtract(accountDebitedEvent.getAmount());
-    }
+	@EventSourcingHandler
+	public void on(AccountDebitedEvent accountDebitedEvent) {
+		log.info("An AccountDebitedEvent occurred.");
+		this.balance = this.balance.subtract(accountDebitedEvent.getAmount());
+	}
 
 	public String getStatus() {
 		return status;

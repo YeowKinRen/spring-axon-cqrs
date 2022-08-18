@@ -52,6 +52,7 @@ public class BankAccountController {
 
             return new ResponseEntity<>("Amount credited", HttpStatus.OK);
         } catch (Exception e) {
+        	log.error(e.toString());
             return new ResponseEntity<>("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -63,6 +64,7 @@ public class BankAccountController {
 
             return new ResponseEntity<>("Amount debited.", HttpStatus.OK);
         } catch (Exception e) {
+        	log.error(e.toString());
             return new ResponseEntity<>("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
