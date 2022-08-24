@@ -15,6 +15,10 @@ Axon Framework Architectural pattern
 ![https://miro.medium.com/max/1400/0*clMT-J6la5mqr_Rg.gif](https://miro.medium.com/max/1400/0*clMT-J6la5mqr_Rg.gif)
 ![https://miro.medium.com/max/1400/0*GZybOTQ_FVbixzDe.gif](https://miro.medium.com/max/1400/0*GZybOTQ_FVbixzDe.gif)
 
+
+![diagram](Axon-Framework.png)
+
+
 Notes
 --------
 ### Terminologies and Axon Annotations
@@ -32,18 +36,20 @@ Notes
 	- The identifier in a command is annotated with ```@TargetAggregateIdentifier```.
 	- > **Note** marked the fields in the commands as final for the message to be immuatable
 - **Query** - intent to request for information of an object's state
+
 - **Event** - object that describe something that has occurred in the application
 	- > **Note** each command has a corresponding event
-- **Aggregate (Command Model)**: an object with states(fields) and methods to alter those states. 
-	- An aggregate class is annotated with ```@Aggregate``` identifier.
-	
+
+- **Aggregate (Command Model)**: an object with states(fields) and methods to alter those states.
+	- **Note** A no-arg constructor is required by Axon. 
+	- An aggregate class is annotated with ```@Aggregate``` identifier to identify a particular instance of the Aggregate.
 	- The identifier in an aggregate is annotated with ```@AggregateIdentifier```.
-
-	- ```@CommandHandler```: Aggregate method level annotation to handle commands.
-
+	- ```@CommandHandler```: Aggregate method level annotation to handle commands and event message is published using ```AggregateLifecycle.apply(Object...)``` to method annotated with ```@EventSourcingHandler```.
+	- ```@EventSourcingHandler``` tells the framework that the annotated function should be called when the Aggregate is 'sourced from its events'. As all the Event Sourcing Handlers combined will form the Aggregate, this is where all the state changes happen.
+	- **Note** Aggregate Identifier must be set in the ```@EventSourcingHandler``` of the very first Event published by the aggregate. (creation event)
+	
 - **Event Handlers (Query Model)**: update this model based on the events propagating through the system
 	- ```@Service```: class annotation for event handler
-
 	- [```@EventHandler```](https://docs.axoniq.io/reference-guide/v/3.1/part-ii-domain-logic/event-handling): to store an event and update it
 
 - **Query Handlers (Query Model)**
@@ -62,21 +68,6 @@ Notes
 - Event Bus - mechanism that dispatches events to the subscribe event handlers. ```AggregateLifecycle.apply(new Event(command.getId, command.getStatus));```
 
 - Event Store - an event bus that is able to persists published events and is able to retrieve previous events based on a given aggregate identifier (Event Bus + persistence)
-
-
-### Axon Annotations
-
-- ```@Aggregate```: Aggregate class level annotation
-
-- ```@AggregateIdentifier```: Aggregate field level annotation for identifying a particular instance of the Aggregate.
-
-- ```@CommandHandler```: Aggregate method level annotation to handle commands. The handler method use the ```AggregateLifecyle.apply()``` method to register events. These events, in turn, are handled by methods annotated with ```@EventSourcingHandler``` annotation
-
-- ```@EventSourcingHandler```: Aggregate method level annotation for event sourced aggregate to perform all state changes. Aggregate Identifier must be set in the first method annotated with  ```@EventSourcingHandler```. In other words, this will be the creation Event.
-  
-- ```@TargetAggregateIdentifier```: 
-
-- [```@EventHandler```](https://docs.axoniq.io/reference-guide/v/3.1/part-ii-domain-logic/event-handling): 
 
 Resource
 --------

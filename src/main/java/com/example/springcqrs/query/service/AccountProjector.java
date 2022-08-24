@@ -1,5 +1,6 @@
 package com.example.springcqrs.query.service;
 
+import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
 import org.slf4j.Logger;
@@ -20,16 +21,17 @@ import com.example.springcqrs.query.repository.AccountRepository;
  * @author 
  **/
 @Service
-public class ManageAccountService {
+@ProcessingGroup("Account")
+public class AccountProjector {
 	
-	private static final Logger log = LoggerFactory.getLogger(ManageAccountService.class);
+	private static final Logger log = LoggerFactory.getLogger(AccountProjector.class);
 
 	@Autowired
     private AccountRepository accountRepository;
 
-    public ManageAccountService(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
+//    public AccountProjector(AccountRepository accountRepository) {
+//        this.accountRepository = accountRepository;
+//    }
 
     @EventHandler
     public void on(AccountCreatedEvent accountCreatedEvent) {
