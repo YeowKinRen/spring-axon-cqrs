@@ -1,11 +1,6 @@
-# spring-cqrs
+# spring-axon-cqrs
 
 Basic Demo project for CQRS and Event Sourcing with Spring Boot and Axon Framework
-
-```java -jar axonserver.jar```
-[Axon Server](https://download.axoniq.io/axonserver/AxonServer.zip)
-This will start up a single Axon Server instance through localhost:8024.
-
 
 Axon Framework Architectural pattern
 --------
@@ -41,12 +36,12 @@ Notes
 	- > **Note** each command has a corresponding event
 
 - **Aggregate (Command Model)**: an object with states(fields) and methods to alter those states.
-	- **Note** A no-arg constructor is required by Axon. 
+	- > **Note** A no-arg constructor is required by Axon. 
 	- An aggregate class is annotated with ```@Aggregate``` identifier to identify a particular instance of the Aggregate.
 	- The identifier in an aggregate is annotated with ```@AggregateIdentifier```.
 	- ```@CommandHandler```: Aggregate method level annotation to handle commands and event message is published using ```AggregateLifecycle.apply(Object...)``` to method annotated with ```@EventSourcingHandler```.
 	- ```@EventSourcingHandler``` tells the framework that the annotated function should be called when the Aggregate is 'sourced from its events'. As all the Event Sourcing Handlers combined will form the Aggregate, this is where all the state changes happen.
-	- **Note** Aggregate Identifier must be set in the ```@EventSourcingHandler``` of the very first Event published by the aggregate. (creation event)
+	- > **Note** Aggregate Identifier must be set in the ```@EventSourcingHandler``` of the very first Event published by the aggregate. (creation event)
 	
 - **Event Handlers (Query Model)**: update this model based on the events propagating through the system
 	- ```@Service```: class annotation for event handler
